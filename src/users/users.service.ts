@@ -36,6 +36,7 @@ export class UsersService {
   }
 
   findOne(id: number): UserDto {
+    if (isNaN(id)) throw new BadRequestException('Invalid user id');
     const user = this._users.find((user) => user.id == id);
     if (user == undefined) throw new NotFoundException();
     const userDto = this.userEntityToDto(user);
@@ -50,6 +51,7 @@ export class UsersService {
   }
 
   update(id: number, updateUserDto: UpdateUserDto): UserDto {
+    if (isNaN(id)) throw new BadRequestException('Invalid user id');
     const findUser = this._users.find((todo) => todo.id == id);
     if (findUser == undefined) {
       throw new NotFoundException();
@@ -72,6 +74,7 @@ export class UsersService {
   }
 
   remove(id: number): number {
+    if (isNaN(id)) throw new BadRequestException('Invalid user id');
     const findUser = this.findOne(id);
     this._users = this._users.filter((user) => user.id != findUser.id);
     return findUser.id;
@@ -87,6 +90,6 @@ export class UsersService {
     );
     if (StringsUtils.isValidEmail(user.email) == false)
       throw new BadRequestException();
-    if (userExists != undefined) throw new BadRequestException();
+    if (userExists != undefined) throw new NotFoundException();
   }
 }

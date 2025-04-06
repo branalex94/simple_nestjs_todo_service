@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { Todo } from './entities/todo.entity';
@@ -38,6 +42,7 @@ export class TodosService {
   }
 
   findOne(id: number): TodoDto {
+    if (isNaN(id)) throw new BadRequestException('Invalid to-do id');
     const todo = this._todos.find((todo) => todo.id == id);
     if (todo == undefined) {
       throw new NotFoundException();
@@ -55,6 +60,7 @@ export class TodosService {
   }
 
   update(id: number, updateTodoDto: UpdateTodoDto): TodoDto {
+    if (isNaN(id)) throw new BadRequestException('Invalid to-do id');
     const findTodo = this._todos.find((todo) => todo.id == id);
     if (findTodo == undefined) {
       throw new NotFoundException();
@@ -77,6 +83,7 @@ export class TodosService {
   }
 
   remove(id: number) {
+    if (isNaN(id)) throw new BadRequestException('Invalid to-do id');
     const findTodo = this.findOne(id);
     this._todos = this._todos.filter((todo) => todo.id != findTodo.id);
     return findTodo.id;
