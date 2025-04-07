@@ -22,7 +22,7 @@ export class UsersService {
       this._idInt++,
       createUserDto.username,
       createUserDto.email,
-      createUserDto.password,
+      createUserDto.password, // TODO: hashear password
       currentDate,
       currentDate,
     );
@@ -41,6 +41,14 @@ export class UsersService {
     if (user == undefined) throw new NotFoundException();
     const userDto = this.userEntityToDto(user);
     return userDto;
+  }
+
+  findByUsername(username: string): User {
+    if (typeof username != 'string')
+      throw new BadRequestException('Invalid username');
+    const user = this._users.find((user) => user.username == username);
+    if (user == undefined) throw new NotFoundException();
+    return user;
   }
 
   findUserEntity(id: number): User {
@@ -89,7 +97,8 @@ export class UsersService {
       (item) => item.username == user.username || item.email == user.email,
     );
     if (StringsUtils.isValidEmail(user.email) == false)
-      throw new BadRequestException();
-    if (userExists != undefined) throw new NotFoundException();
+      throw new BadRequestException('Email is not valid format');
+    if (userExists != undefined)
+      throw new BadRequestException('Username or email already registered');
   }
 }
